@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static',filename='w3.css') }}">
+    <style>
+        .custom-scroll::-webkit-scrollbar {
+            width: .3em;
+        }
+
+        .custom-scroll::-webkit-scrollbar-track {
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background-color: darkgrey;
+            outline: 1px solid slategrey;
+        }
+    </style>
+
+    <title>ESP OTA Updater</title>
+</head>
+
+<body>
+
+    <header class="w3-container w3-black  w3-card w3">
+        <h3 class="w3-padding">ESP OTA Updater</h3>
+    </header>
+
+    <div class="">
+        <div class="w3-sidebar w3-bar-block w3-card w3-padding" style="width:25%">
+
+
+            <h3 class="w3-bar-item w3-center">All Uploads</h3>
+            <div class="w3-center w3-margin">
+                <a href="{{ url_for('index') }}" class="w3-round w3-black w3-button">Create New Version</a>
+            </div>
+
+            <hr>
+            <div style="overflow-y: scroll;max-height: 60%;" class="custom-scroll">
+                {% for file in files %}
+                {% if filename==file %}
+
+                <a class="w3-bar-item w3-button w3-border w3-border-green w3-center w3-pale-green"
+                    href="{{ url_for('show_file', file=file) }}">{{ file }}{% if loop.index == 1 %}
+                    <span class="w3-tag w3-teal"><small>Latest</small></span>
+                    {% endif %}</a>
+
+                {% else %}
+
+                <a class="w3-bar-item w3-button w3-border w3-center w3-light-gray"
+                    href="{{ url_for('show_file', file=file) }}">{{ file }}{% if loop.index == 1 %}
+                    <span class="w3-tag w3-teal"><small>Latest</small></span>
+                    {% endif %}</a>
+
+                {% endif %}
+
+                {% endfor %}
+
+            </div>
+        </div>
+
+        <div style="margin-left:25%">
+
+            <div class="w3-container">
+
+
+
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                {% for message in messages %}
+                <div class="w3-panel w3-bottombar w3-border w3-border-red w3-pale-red w3-display-container">
+                    <span onclick="this.parentElement.style.display='none'"
+                        class="w3-button w3-pale-red w3-large w3-display-topright">&times;</span>
+                    <h5>{{ message }}</h5>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                {% if read_only %}
+
+                <h3>Version: {{ filename }}</h3>
+
+
+                <div class="w3-padding w3-light-gray w3-card w3-round">
+                    <pre class="w3-code pythonHigh">{{ file_data }}</pre>
+                </div>
+
+                <div class="w3-margin">
+                    Checksum: <span class="w3-light-gray w3-padding">{{checksum}}</span>
+                </div>
+
+                {% else %}
+
+                <div class="w3-padding">
+                    <div class="w3-container w3-margin-top w3-light-gray w3-round w3-card w3-padding">
+
+                        <div>
+                            <h4>Upload a new version</h4>
+                        </div>
+    
+                        <form action="{{ url_for('upload') }}" method="post">
+                            <textarea required class="" name="data" rows="10" cols="80"></textarea>
+                            <br>
+                            <button type="submit" value="upload"
+                                class="w3-btn w3-blue w3-round w3-margin-top w3-margin-bottom"><b>Upload</b></button>
+                            <br>
+                        </form>
+                    </div>
+                </div>
+
+                {% endif %}
+
+
+
+
+            </div>
+
+        </div>
+
+        <br>
+
+    </div>
+
+
+    <script type="text/javascript" src="{{ url_for('static',filename='w3codecolor.js') }}"></script>
+    <script>
+        w3CodeColor();
+    </script>
+</body>
+
+</html>
